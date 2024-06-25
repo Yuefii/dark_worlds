@@ -79,29 +79,29 @@ export default function Home() {
 
       switch (command) {
         case "whoami":
-          newOutput += `\n$ ${input}\n${currentUser ? currentUser : "Not logged in"}`;
+          newOutput += `\n⤷ ${input}\n${currentUser ? currentUser : "Not logged in"}`;
           break;
         case "clear":
           newOutput = "";
           break;
         case "register":
           if (commandArgs.length < 2) {
-            newOutput += `\n$ ${input}\nUsage: register <username> <password>`;
+            newOutput += `\n⤷ ${input}\nUsage: register <username> <password>`;
           } else {
             const [username, password] = commandArgs;
             const { data, error } = await supabase
               .from('users')
               .insert([{ username, password }]);
             if (error) {
-              newOutput += `\n$ ${input}\nError: ${error.message}`;
+              newOutput += `\n⤷ ${input}\nError: ${error.message}`;
             } else {
-              newOutput += `\n$ ${input}\nUser ${username} registered successfully`;
+              newOutput += `\n⤷ ${input}\nUser ${username} registered successfully`;
             }
           }
           break;
         case "login":
           if (commandArgs.length < 2) {
-            newOutput += `\n$ ${input}\nUsage: login <username> <password>`;
+            newOutput += `\n⤷ ${input}\nUsage: login <username> <password>`;
           } else {
             const [username, password] = commandArgs;
             const { data, error } = await supabase
@@ -111,7 +111,7 @@ export default function Home() {
               .eq('password', password)
               .single();
             if (error || !data) {
-              newOutput += `\n$ ${input}\nInvalid username or password`;
+              newOutput += `\n⤷ ${input}\nInvalid username or password`;
             } else {
               setCurrentUser(username);
               localStorage.setItem("currentUser", username);
@@ -119,14 +119,14 @@ export default function Home() {
                 .from('users')
                 .update({ online: true })
                 .eq('username', username);
-              newOutput += `\n$ ${input}\nUser ${username} logged in successfully`;
+              newOutput += `\n⤷ ${input}\nUser ${username} logged in successfully`;
               fetchOnlineUsers();
             }
           }
           break;
         case "logout":
           if (!currentUser) {
-            newOutput += `\n$ ${input}\nYou need to be logged in to log out`;
+            newOutput += `\n⤷ ${input}\nYou need to be logged in to log out`;
           } else {
             await supabase
               .from('users')
@@ -134,24 +134,24 @@ export default function Home() {
               .eq('username', currentUser);
             setCurrentUser(null);
             localStorage.removeItem("currentUser");
-            newOutput += `\n$ ${input}\nUser logged out successfully`;
+            newOutput += `\n⤷ ${input}\nUser logged out successfully`;
             fetchOnlineUsers();
           }
           break;
         case "inbox":
           if (!currentUser) {
-            newOutput += `\n$ ${input}\nYou need to log in to view your inbox`;
+            newOutput += `\n⤷ ${input}\nYou need to log in to view your inbox`;
           } else {
             const { data, error } = await supabase
               .from('messages')
               .select('*')
               .eq('recipient', currentUser);
             if (error || !data) {
-              newOutput += `\n$ ${input}\nError: ${error.message}`;
+              newOutput += `\n⤷ ${input}\nError: ${error.message}`;
             } else if (data.length === 0) {
-              newOutput += `\n$ ${input}\nNo new messages`;
+              newOutput += `\n⤷ ${input}\nNo new messages`;
             } else {
-              newOutput += `\n$ ${input}\nInbox:\n`;
+              newOutput += `\n⤷ ${input}\nInbox:\n`;
               data.forEach((message: any, index: number) => {
                 newOutput += `${index + 1}. From ${message.sender}: ${message.content}\n`;
               });
@@ -160,9 +160,9 @@ export default function Home() {
           break;
         case "send":
           if (!currentUser) {
-            newOutput += `\n$ ${input}\nYou need to log in to send messages`;
+            newOutput += `\n⤷ ${input}\nYou need to log in to send messages`;
           } else if (commandArgs.length < 2) {
-            newOutput += `\n$ ${input}\nUsage: send <recipient> <message>`;
+            newOutput += `\n⤷ ${input}\nUsage: send <recipient> <message>`;
           } else {
             const [recipient, ...messageParts] = commandArgs;
             const message = messageParts.join(" ");
@@ -170,26 +170,26 @@ export default function Home() {
               .from('messages')
               .insert([{ sender: currentUser, recipient, content: message }]);
             if (error) {
-              newOutput += `\n$ ${input}\nError: ${error.message}`;
+              newOutput += `\n⤷ ${input}\nError: ${error.message}`;
             } else {
-              newOutput += `\n$ ${input}\nMessage sent to ${recipient}`;
+              newOutput += `\n⤷ ${input}\nMessage sent to ${recipient}`;
             }
           }
           break;
         case "discussion":
           if (!currentUser) {
-            newOutput += `\n$ ${input}\nYou need to log in to join the discussion`;
+            newOutput += `\n⤷ ${input}\nYou need to log in to join the discussion`;
           } else if (commandArgs.length === 0) {
-            newOutput += `\n$ ${input}\nUsage: discussion <message>`;
+            newOutput += `\n⤷ ${input}\nUsage: discussion <message>`;
           } else {
             const message = commandArgs.join(" ");
             const { data, error } = await supabase
               .from('community_discussion_messages')
               .insert([{ sender_username: currentUser, content: message }]);
             if (error) {
-              newOutput += `\n$ ${input}\nError: ${error.message}`;
+              newOutput += `\n⤷ ${input}\nError: ${error.message}`;
             } else {
-              newOutput += `\n$ ${input}\nMessage posted to community discussion`;
+              newOutput += `\n⤷ ${input}\nMessage posted to community discussion`;
               fetchDiscussionMessages();
             }
           }
@@ -218,7 +218,7 @@ export default function Home() {
           }
           break;
         case "help":
-          newOutput += `\n$ ${input}\nAvailable Commands:\n`;
+          newOutput += `\n⤷ ${input}\nAvailable Commands:\n`;
           newOutput += `-------------------------------------------------------------------\n`;
           newOutput += `whoami                         - Display current user\n`;
           newOutput += `clear                          - Clear screen\n`;
@@ -231,6 +231,7 @@ export default function Home() {
           newOutput += `-------------------------------------------------------------------\n`;
           break;
         case "about":
+          newOutput += `\n⤷ ${input}\n`;
           newOutput += `-------------------------------------------------------------------\n`;
           newOutput += `  ____             _                         _     _     \n`;
           newOutput += ` |  _ \\  __ _ _ __| | __ __      _____  _ __| | __| |___ \n`;
@@ -243,7 +244,7 @@ export default function Home() {
           newOutput += `This web created by Yuefii                                         \n`;
           break;
         default:
-          newOutput += `\n$ ${input}\nCommand not found please using "help"`;
+          newOutput += `\n⤷ ${input}\nCommand not found please using "help"`;
       }
 
       setOutput(newOutput);
@@ -253,12 +254,12 @@ export default function Home() {
 
   return (
     <main className="max-w-4xl mx-auto bg-black rounded">
-      <div className="my-40 p-5 h-[500px] overflow-auto">
+      <div className="p-5 h-[500px] overflow-auto">
         <div
           onClick={() => inputRef.current?.focus()}
           className="flex gap-2"
         >
-          <h1 className="text-white">$</h1>
+          <h1 className="text-white">⤷</h1>
           <input
             ref={inputRef}
             value={input}
