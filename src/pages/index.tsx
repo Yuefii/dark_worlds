@@ -172,6 +172,19 @@ export default function Home() {
             }
           }
           break;
+        case "help":
+          newOutput += `\n$ ${input}\nAvailable Commands:\n`;
+          newOutput += `-------------------------------------------------------------------\n`;
+          newOutput += `whoami                         - Display current user\n`;
+          newOutput += `clear                          - Clear screen\n`;
+          newOutput += `register <username> <password> - Register a new user\n`;
+          newOutput += `login <username> <password>    - Log in as a user\n`;
+          newOutput += `logout                         - Log out from current user\n`;
+          newOutput += `send <recipient> <message>     - Send a message to another user\n`;
+          newOutput += `discussion <message>           - Post a message to community discussion\n`;
+          newOutput += `help                           - Show available commands\n`;
+          newOutput += `-------------------------------------------------------------------\n`;
+          break;
         default:
           newOutput += `\n$ ${input}\nCommand not found`;
       }
@@ -199,7 +212,9 @@ export default function Home() {
           />
         </div>
         <div className="text-white whitespace-pre-line">
-          {output}
+          <pre>
+            {output}
+          </pre>
         </div>
         <div className="text-white mt-4">
           <h2>Community Discussion:</h2>
