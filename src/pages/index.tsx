@@ -13,6 +13,7 @@ export default function Home() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [discussionMessages, setDiscussionMessages] = useState<any[]>([]);
+  const [showDiscussion, setShowDiscussion] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -172,6 +173,23 @@ export default function Home() {
             }
           }
           break;
+        case "show":
+          if (commandArgs[0] === "discussion") {
+            setShowDiscussion(true);
+            console.log("Community discussion is now visible");
+          } else {
+            console.log("Command not recognized");
+          }
+          break;
+
+        case "hide":
+          if (commandArgs[0] === "discussion") {
+            setShowDiscussion(false);
+            console.log("Community discussion is now hidden");
+          } else {
+            console.log("Command not recognized");
+          }
+          break;
         case "help":
           newOutput += `\n$ ${input}\nAvailable Commands:\n`;
           newOutput += `-------------------------------------------------------------------\n`;
@@ -184,6 +202,18 @@ export default function Home() {
           newOutput += `discussion <message>           - Post a message to community discussion\n`;
           newOutput += `help                           - Show available commands\n`;
           newOutput += `-------------------------------------------------------------------\n`;
+          break;
+        case "about":
+          newOutput += `-------------------------------------------------------------------\n`;
+          newOutput += `  ____             _                         _     _     \n`;
+          newOutput += ` |  _ \\  __ _ _ __| | __ __      _____  _ __| | __| |___ \n`;
+          newOutput += ` | | | |/ _\` | '__| |/ / \\ \\ /\\ / / _ \\| '__| |/ _\` / __|\n`;
+          newOutput += ` | |_| | (_| | |  |   <   \\ V  V / (_) | |  | | (_| \\__ \\ \n`;
+          newOutput += ` |____/ \\__,_|_|  |_|\\_\\   \\_/\\_/ \\___/|_|  |_|\\__,_|___/ \n`;
+          newOutput += `                                                         \n`;
+          newOutput += `-------------------------------------------------------------------\n`;
+          newOutput += `Show available commands using "help"                               \n`;
+          newOutput += `This web created by Yuefii                                         \n`;
           break;
         default:
           newOutput += `\n$ ${input}\nCommand not found`;
@@ -216,14 +246,16 @@ export default function Home() {
             {output}
           </pre>
         </div>
-        <div className="text-white mt-4">
-          <h2>Community Discussion:</h2>
-          <ul>
-            {discussionMessages.map((message, index) => (
-              <li key={index}>{message.sender_username}: {message.content}</li>
-            ))}
-          </ul>
-        </div>
+        {showDiscussion && (
+          <div className="text-white mt-4">
+            <h2>Community Discussion:</h2>
+            <ul>
+              {discussionMessages.map((message, index) => (
+                <li key={index}>{message.sender_username}: {message.content}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="text-white mt-4">
           <h2>Online Users:</h2>
           <ul>
