@@ -14,6 +14,7 @@ export default function Home() {
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [discussionMessages, setDiscussionMessages] = useState<any[]>([]);
   const [showDiscussion, setShowDiscussion] = useState(false);
+  const [showOnlineUser, setShowOnlineUser] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -137,6 +138,26 @@ export default function Home() {
             fetchOnlineUsers();
           }
           break;
+        case "inbox":
+          if (!currentUser) {
+            newOutput += `\n$ ${input}\nYou need to log in to view your inbox`;
+          } else {
+            const { data, error } = await supabase
+              .from('messages')
+              .select('*')
+              .eq('recipient', currentUser);
+            if (error || !data) {
+              newOutput += `\n$ ${input}\nError: ${error.message}`;
+            } else if (data.length === 0) {
+              newOutput += `\n$ ${input}\nNo new messages`;
+            } else {
+              newOutput += `\n$ ${input}\nInbox:\n`;
+              data.forEach((message: any, index: number) => {
+                newOutput += `${index + 1}. From ${message.sender}: ${message.content}\n`;
+              });
+            }
+          }
+          break;
         case "send":
           if (!currentUser) {
             newOutput += `\n$ ${input}\nYou need to log in to send messages`;
@@ -177,6 +198,9 @@ export default function Home() {
           if (commandArgs[0] === "discussion") {
             setShowDiscussion(true);
             console.log("Community discussion is now visible");
+          } else if (commandArgs[0] === "users") {
+            setShowOnlineUser(true)
+            console.log("Users Online is now visible");
           } else {
             console.log("Command not recognized");
           }
@@ -186,6 +210,9 @@ export default function Home() {
           if (commandArgs[0] === "discussion") {
             setShowDiscussion(false);
             console.log("Community discussion is now hidden");
+          } else if (commandArgs[0] === "users") {
+            setShowOnlineUser(false)
+            console.log("Users Online is now hidden");
           } else {
             console.log("Command not recognized");
           }
@@ -216,7 +243,7 @@ export default function Home() {
           newOutput += `This web created by Yuefii                                         \n`;
           break;
         default:
-          newOutput += `\n$ ${input}\nCommand not found`;
+          newOutput += `\n$ ${input}\nCommand not found please using "help"`;
       }
 
       setOutput(newOutput);
@@ -256,14 +283,17 @@ export default function Home() {
             </ul>
           </div>
         )}
-        <div className="text-white mt-4">
-          <h2>Online Users:</h2>
-          <ul>
-            {onlineUsers.map(user => (
-              <li key={user.username}>{user.username}</li>
-            ))}
-          </ul>
-        </div>
+        {showOnlineUser && (
+          <div className="text-white mt-4">
+            <h2>Online Users:</h2>
+            <ul>
+              {onlineUsers.map(user => (
+                <li key={user.username}>{user.username}</li>
+              ))}
+            </ul>
+          </div>
+        )
+        }
       </div>
     </main>
   );
